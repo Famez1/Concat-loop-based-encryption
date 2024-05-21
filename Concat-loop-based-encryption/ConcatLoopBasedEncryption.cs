@@ -10,37 +10,49 @@ namespace Concat_loop_based_encryption
     {
         public string Encrypt(string text, int n)
         {
-            char[] chars = text.ToCharArray();
-
             for (int i = 0; i < n; i++)
             {
-                char[] temp = new char[chars.Length];
+                var oddChars = new StringBuilder();
+                var evenChars = new StringBuilder();
 
-                for (int j = 0; j < chars.Length; j++)
+                for (int j = 0; j < text.Length; j++)
                 {
-                    temp[j] = chars[(j + chars.Length / 2) % chars.Length];
+                    if (j % 2 == 0)
+                        evenChars.Append(text[j]);
+                    else
+                        oddChars.Append(text[j]);
                 }
-                chars = temp;
+
+                text = oddChars.ToString() + evenChars.ToString();
             }
-            return new string(chars);
+
+            return text;
         }
 
         public string Decrypt(string text, int n)
         {
-            char[] chars = text.ToCharArray();
-
             for (int i = 0; i < n; i++)
             {
-                char[] temp = new char[chars.Length];
+                int halfLength = text.Length / 2;
+                int oddLength = (text.Length % 2 == 0) ? halfLength : halfLength + 1;
 
-                for (int j = 0; j < chars.Length; j++)
+                var oddChars = text.Substring(0, halfLength);
+                var evenChars = text.Substring(halfLength);
+
+                var decrypted = new StringBuilder();
+
+                for (int j = 0; j < oddLength; j++)
                 {
-                    temp[(j + chars.Length / 2) % chars.Length] = chars[j];
+                    if (j < evenChars.Length)
+                        decrypted.Append(evenChars[j]);
+                    if (j < oddChars.Length)
+                        decrypted.Append(oddChars[j]);
                 }
-                chars = temp;
+
+                text = decrypted.ToString();
             }
 
-            return new string(chars);
+            return text;
         }
     }
 }
